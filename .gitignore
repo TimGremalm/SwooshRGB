@@ -50,3 +50,13 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# esp-idf
+build
+sdkconfig
+sdkconfig.old
+
+# Visual Studio Code
+.vscode
+*/.vscode
+
