@@ -94,7 +94,7 @@ void uitask(void *pvParameters) {
 		if (xQueueGenericSend(ui_config.queue_ui_mode, ( void * ) &posswitch.value, (TickType_t) 10, queueSEND_TO_BACK ) != pdPASS) {
 			//ESP_LOGI(TAG, "Failed to post mode message, even after 10 ticks.");
 		}
-		vTaskDelay(50 / portTICK_PERIOD_MS);
+		vTaskDelay(20 / portTICK_PERIOD_MS);
 	}
 }
 

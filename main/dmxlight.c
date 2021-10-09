@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 #include "e131.h"
+#include "hsl.h"
 
 /* Channel PWM parameters */
 #define LEDC_MODE               LEDC_HIGH_SPEED_MODE
@@ -118,6 +119,13 @@ void dmxlighttask(void *pvParameters) {
 			} else {
 				// ESP_LOGI(TAG, "Error receiving from queue_ui_pot2");
 			}
+			// Set color based on pots
+			float RGB[3] = {0, 0, 0};
+			hslToRgb(pot_hue, 1.0f, pot_lightness, RGB);
+			duty_red = (uint32_t)(((float)duty_max) * RGB[0]);
+			duty_green = (uint32_t)(((float)duty_max) * RGB[1]);
+			duty_blue = (uint32_t)(((float)duty_max) * RGB[2]);
+			duty_white = 0;
 		} else {
 			/* Read DMX values for start-channel */
 			dmx_dimmer = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 0]) / 255;
