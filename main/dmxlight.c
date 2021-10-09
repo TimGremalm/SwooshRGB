@@ -127,3 +127,4 @@ void dmxlighttask(void *pvParameters) {
 		vTaskDelay(20 / portTICK_PERIOD_MS);
 	}
 }
+
