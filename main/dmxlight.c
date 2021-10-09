@@ -99,20 +99,24 @@ void dmxlighttask(void *pvParameters) {
 	uint32_t duty_blue = 0;
 	uint32_t duty_white = 0;
 	while(1) {
-		/* Read DMX values for start-channel */
-		dmx_dimmer = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 0]) / 255;
-		dmx_red = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 1]) / 255;
-		dmx_green = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 2]) / 255;
-		dmx_blue = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 3]) / 255;
-		dmx_white = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 4]) / 255;
-		// ESP_LOGI(TAG, "Dimmer %f R %f G %f B %f W %f", dmx_dimmer, dmx_red, dmx_green, dmx_blue, dmx_white);
+		if (e131packet_received == 0) {
+			// ESP_LOGI(TAG, "DMX not received yet");
+		} else {
+			/* Read DMX values for start-channel */
+			dmx_dimmer = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 0]) / 255;
+			dmx_red = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 1]) / 255;
+			dmx_green = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 2]) / 255;
+			dmx_blue = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 3]) / 255;
+			dmx_white = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 4]) / 255;
+			// ESP_LOGI(TAG, "Dimmer %f R %f G %f B %f W %f", dmx_dimmer, dmx_red, dmx_green, dmx_blue, dmx_white);
 
-		/* Upscale values to 13 bit, also apply master dimmer channel */
-		duty_red = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_red);
-		duty_green = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_green);
-		duty_blue = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_blue);
-		duty_white = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_white);
-		// ESP_LOGI(TAG, "R %u G %u B %u W %u", duty_red, duty_green, duty_blue, duty_white);
+			/* Upscale values to 13 bit, also apply master dimmer channel */
+			duty_red = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_red);
+			duty_green = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_green);
+			duty_blue = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_blue);
+			duty_white = (uint32_t)(((float)duty_max) * dmx_dimmer * dmx_white);
+			// ESP_LOGI(TAG, "R %u G %u B %u W %u", duty_red, duty_green, duty_blue, duty_white);
+		}
 
 		/* Set duty cycle to RGBW values */
 		ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, LEDC_CHANNEL_RED, duty_red));

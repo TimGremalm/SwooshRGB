@@ -29,6 +29,8 @@ void e131task(void *pvParameters) {
 	
 	ESP_LOGI(TAG, "Start");
 
+	e131packet_received = 0;
+
 	/* Create a new connection handle */
 	conn = netconn_new(NETCONN_UDP);
 	if(!conn) {
@@ -70,6 +72,7 @@ void e131task(void *pvParameters) {
 			e131packettemporary.universe = reverse(e131packettemporary.universe);
 			if (e131packettemporary.universe == CONFIG_SACN_UNIVERSE) {
 				memcpy(e131packet.raw, e131packettemporary.raw, sizeof(e131packet.raw));
+				e131packet_received = xTaskGetTickCount() * portTICK_PERIOD_MS;
 				// ESP_LOGI(TAG, "Universe %d channel 1 %d", e131packet.universe, e131packet.property_values[1]);
 			} else {
 				// ESP_LOGI(TAG, "Incorect Universe %d", e131packettemporary.universe);
