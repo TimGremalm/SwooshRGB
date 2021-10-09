@@ -36,6 +36,7 @@
 #define LEDC_CHANNEL_WHITE        LEDC_CHANNEL_3
 
 static const char *TAG = "DMX Light";
+dmxlight_config_t dmxlight_config;
 
 void init_led_pwm() {
 	// Prepare and then apply the LEDC PWM timer configuration
@@ -82,6 +83,7 @@ void init_led_pwm() {
 }
 
 void dmxlighttask(void *pvParameters) {
+	dmxlight_config = *(dmxlight_config_t *) pvParameters;
 	ESP_LOGI(TAG, "Start");
 
 	ESP_LOGI(TAG, "Init PWM");
@@ -98,9 +100,24 @@ void dmxlighttask(void *pvParameters) {
 	uint32_t duty_green = 0;
 	uint32_t duty_blue = 0;
 	uint32_t duty_white = 0;
+	float buf_pot = 0;
+	float pot_hue = 0;
+	float pot_lightness = 0;
 	while(1) {
 		if (e131packet_received == 0) {
 			// ESP_LOGI(TAG, "DMX not received yet");
+			if (xQueueReceive(dmxlight_config.queue_ui_pot1, &buf_pot, (TickType_t) 10)) {
+				// ESP_LOGI(TAG, "From queue %f", buf_pot);
+				pot_hue = buf_pot;
+			} else {
+				// ESP_LOGI(TAG, "Error receiving from queue_ui_pot1");
+			}
+			if (xQueueReceive(dmxlight_config.queue_ui_pot2, &buf_pot, (TickType_t) 10)) {
+				// ESP_LOGI(TAG, "From queue %f", buf_pot);
+				pot_lightness = buf_pot;
+			} else {
+				// ESP_LOGI(TAG, "Error receiving from queue_ui_pot2");
+			}
 		} else {
 			/* Read DMX values for start-channel */
 			dmx_dimmer = ((float)e131packet.property_values[CONFIG_SACN_DMX_START + 0]) / 255;

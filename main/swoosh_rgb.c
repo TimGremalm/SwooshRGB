@@ -39,6 +39,7 @@ static const char *TAG = "Main";
 static int s_retry_num = 0;
 
 ui_config_t uiconfig;
+dmxlight_config_t dmxlightconfig;
 
 static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
 	if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
@@ -138,12 +139,15 @@ void app_main(void) {
 	uiconfig.queue_ui_mode = xQueueCreate(1, sizeof(uint8_t));  // queue capable of containing 1 value
 	uiconfig.queue_ui_pot1 = xQueueCreate(1, sizeof(float));
 	uiconfig.queue_ui_pot2 = xQueueCreate(1, sizeof(float));
+	dmxlightconfig.queue_ui_mode = uiconfig.queue_ui_mode;
+	dmxlightconfig.queue_ui_pot1 = uiconfig.queue_ui_pot1;
+	dmxlightconfig.queue_ui_pot2 = uiconfig.queue_ui_pot2;
+	xTaskCreate(&dmxlighttask, "DMX_Light_task", 4096, &dmxlightconfig, 5, NULL);
 	xTaskCreate(&uitask, "UI_task", 4096, &uiconfig, 5, NULL);
 	
 	ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
 	wifi_init_sta();
 
-	xTaskCreate(&dmxlighttask, "DMX_Light_task", 4096, NULL, 5, NULL);
 	xTaskCreate(&e131task, "E131_task", 4096, NULL, 5, NULL);
 }
 
