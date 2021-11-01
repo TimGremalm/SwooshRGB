@@ -13,6 +13,8 @@ http://tim.gremalm.se
 #include "esp_log.h"
 #include "nvs_flash.h"
 
+#include "TLS3001.h"
+
 static const char *TAG = "Main";
 
 void testtask(void *pvParameters) {
@@ -31,6 +33,10 @@ void app_main(void) {
 		ret = nvs_flash_init();
 	}
 	ESP_ERROR_CHECK(ret);
+
+	uint16_t num_pixels_ch1 = 361;		//Maximum number of pixels on strip. 361 for the one on my desk.
+    uint16_t num_pixels_ch2 = 20;	
+	TLS3001_init(num_pixels_ch1, num_pixels_ch2);
 
 	xTaskCreate(&testtask, "Test_task", 4096, NULL, 5, NULL);
 }
