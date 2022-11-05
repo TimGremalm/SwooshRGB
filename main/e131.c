@@ -18,6 +18,8 @@
 #include <stdint.h>
 
 static const char *TAG = "E1.31";
+e131_packet_t e131packet; /* Packet buffer for E1.31 sASC DMX-512 data */
+uint32_t e131packet_received;
 
 uint16_t reverse(uint16_t num) {
 	return (num>>8) | (num<<8);

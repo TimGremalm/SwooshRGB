@@ -42,8 +42,8 @@ typedef union {
 
 void e131task(void *pvParameters);
 
-e131_packet_t e131packet; /* Packet buffer for E1.31 sASC DMX-512 data */
-uint32_t e131packet_received;
+extern e131_packet_t e131packet; /* Packet buffer for E1.31 sASC DMX-512 data */
+extern uint32_t e131packet_received;
 
 #endif /* E131_H_ */
 
